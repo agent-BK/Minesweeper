@@ -17,6 +17,7 @@ import static menu.MessageMenu.showMessage;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class InitGame extends JFrame {
+
     private JPanel panel;
     private Game game;
     private int cols = 10;

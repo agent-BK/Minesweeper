@@ -8,18 +8,21 @@ import static enums.Size.*;
 
 public class SplashScreen extends JWindow {
 
-    private final int duration;
+    private static final int TIME = 5000;
     private final int WIDTH = SIZE_480.getSize();
     private final int HEIGHT = SIZE_320.getSize();
     private final Dimension SCREEN = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public SplashScreen(int duration) {
-        this.duration = duration;
+    public SplashScreen() {
     }
 
     public void showSplashAndExit() {
+        showSplashAndExit(TIME);
+    }
+
+    public void showSplashAndExit(int duration) {
         showSplash();
-        closeSplash();
+        closeSplash(duration);
     }
 
     private void showSplash() {
@@ -35,7 +38,7 @@ public class SplashScreen extends JWindow {
         setVisible(true);
     }
 
-    private void closeSplash() {
+    private void closeSplash(int duration) {
         try {
             Thread.sleep(duration);
             dispose();

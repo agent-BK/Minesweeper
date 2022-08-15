@@ -26,22 +26,17 @@ public class LevelMenu extends BaseMenu {
 
     private static ButtonGroup setRadioButton(ArrayList<Object> elements, int levelGame) {
         ButtonGroup btnGroup = new ButtonGroup();
-        ArrayList<Level> levels = new ArrayList<>(Arrays.asList(Level.values()));
-        for (Level level : levels) {
-            String btnLevelNum = level.getLevelsNum();
-            JRadioButton btn;
-            if (Integer.toString(levelGame).equals(btnLevelNum)) {
-                btn = new JRadioButton(level.getLevelName(), true);
-            } else {
-                btn = new JRadioButton(level.getLevelName(), false);
-            }
+        Arrays.stream(Level.values()).forEach(level -> {
+            JRadioButton btn = new JRadioButton(
+                    level.getLevelName(),
+                    Integer.toString(levelGame).equals(level.getLevelsNum()));
             btn.setActionCommand(level.getLevelsNum());
-            btn.setPreferredSize(
-                    new Dimension(SIZE_180.getSize(), SIZE_25.getSize())
-            );
+            btn.setPreferredSize(new Dimension(
+                    SIZE_180.getSize(),
+                    SIZE_25.getSize()));
             btnGroup.add(btn);
             elements.add(btn);
-        }
+        });
         return btnGroup;
     }
 
