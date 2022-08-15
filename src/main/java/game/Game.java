@@ -2,10 +2,10 @@ package game;
 
 import enums.Icons;
 import lombok.Data;
+import utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Data
 public class Game {
@@ -37,17 +37,11 @@ public class Game {
     public void visibleAllMine() {
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                GameObject obj = gamePanel[x][y];
-                if (obj.isFlag()) {
-                    if (obj.isMine()) {
-                        obj.setIcon(Icons.BOMB);
-                    } else {
-                        obj.setIcon(Icons.NOBOMB);
-                    }
-                    obj.setOpen(true);
-                } else if (obj.isMine() && !obj.isOpen()) {
-                    obj.setIcon(Icons.BOMBED);
-                    obj.setOpen(true);
+                GameObject gameObject = gamePanel[x][y];
+                if (gameObject.isFlag()) {
+                    gameObject.setIconAndOpen(gameObject.isMine() ? Icons.BOMB : Icons.NOBOMB, true);
+                } else if (gameObject.isMine() && !gameObject.isOpen()) {
+                    gameObject.setIconAndOpen(Icons.BOMBED, true);
                 }
             }
         }
@@ -56,25 +50,22 @@ public class Game {
     /**
      * левое нажатие мышки
      **/
-    public void openTileLeft(int x, int y) {
-        GameObject obj = gamePanel[x][y];
-        if (!obj.isOpen() && !obj.isFlag() && !stopGame) {
-            obj.setOpen(true);
-            if (obj.isMine()) {
-                obj.setIcon(Icons.BOMBED);
+    public void openTileWithLeftClick(int x, int y) {
+        GameObject gameObject = gamePanel[x][y];
+        if (!gameObject.isOpen() && !gameObject.isFlag() && !stopGame) {
+            gameObject.setOpen(true);
+            if (gameObject.isMine()) {
+                gameObject.setIcon(Icons.BOMBED);
                 stopGame = true;
             } else {
                 countCell--;
-                if (obj.getCountMineNeighbors() > 0) {
-                    obj.setIcon(Icons.values()[obj.getCountMineNeighbors()]);
+                if (gameObject.getCountMineNeighbors() > 0) {
+                    gameObject.setIcon(Icons.values()[gameObject.getCountMineNeighbors()]);
                 } else {
-                    obj.setIcon(Icons.ZERO);
-                    List<GameObject> result = getNeighbors(obj);
-                    for (GameObject cell : result) {
-                        if (!cell.isOpen()) {
-                            openTileLeft(cell.getX(), cell.getY());
-                        }
-                    }
+                    gameObject.setIcon(Icons.ZERO);
+                    getNeighbors(gameObject).stream()
+                            .filter(cell -> !cell.isOpen())
+                            .forEach(cell -> openTileWithLeftClick(cell.getX(), cell.getY()));
                 }
             }
         }
@@ -83,7 +74,7 @@ public class Game {
     /**
      * правое нажатие мышки
      **/
-    public void openTileRight(int x, int y) {
+    public void openTileWithRightClick(int x, int y) {
         GameObject gameObject = gamePanel[x][y];
         if (!stopGame) {
             if (!gameObject.isOpen() && !gameObject.isFlag() && countFlag > 0) {
@@ -110,7 +101,7 @@ public class Game {
         boolean mine_status;
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                mine_status = getRandomNumber(level) == 1;
+                mine_status = RandomUtils.getRandomNumber(level) == 1;
                 gamePanel[x][y] = new GameObject(x, y, mine_status);
                 if (mine_status) {
                     countMine++;
@@ -129,12 +120,8 @@ public class Game {
             for (int y = 0; y < cols; y++) {
                 GameObject gameObject = gamePanel[x][y];
                 if (!gameObject.isMine()) {
-                    List<GameObject> lists = getNeighbors(gameObject);
-                    for (GameObject list : lists) {
-                        if (list.isMine()) {
-                            gameObject.incCountMineNeighbors();
-                        }
-                    }
+                    long countNeighbors = getNeighbors(gameObject).stream().filter(GameObject::isMine).count();
+                    gameObject.plusCountMineNeighbors(countNeighbors);
                 }
             }
         }
@@ -154,12 +141,5 @@ public class Game {
             }
         }
         return result;
-    }
-
-    /**
-     * случайное число для расположения мин
-     **/
-    private int getRandomNumber(int num) {
-        return new Random().nextInt(num);
     }
 }

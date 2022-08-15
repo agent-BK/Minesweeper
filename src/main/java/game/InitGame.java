@@ -67,9 +67,9 @@ public class InitGame extends JFrame {
                     int y = e.getX() / SIZE_30.getSize();
                     int x = e.getY() / SIZE_30.getSize();
                     if (e.getButton() == MouseEvent.BUTTON1) {
-                        game.openTileLeft(x, y);
+                        game.openTileWithLeftClick(x, y);
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        game.openTileRight(x, y);
+                        game.openTileWithRightClick(x, y);
                     }
                     if ((game.getCountCell() == game.getCountMine() && game.getCountFlag() == 0) || game.isStopGame()) {
                         game.visibleAllMine();

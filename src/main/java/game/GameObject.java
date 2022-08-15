@@ -26,7 +26,12 @@ public class GameObject {
         return icon.getIcon();
     }
 
-    public void incCountMineNeighbors() {
-        countMineNeighbors++;
+    public void plusCountMineNeighbors(long num) {
+        countMineNeighbors += num;
+    }
+
+    public void setIconAndOpen(Icons icon, boolean isOpen) {
+        this.icon = icon;
+        this.isOpen = isOpen;
     }
 }

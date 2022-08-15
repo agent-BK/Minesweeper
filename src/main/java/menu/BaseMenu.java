@@ -37,8 +37,6 @@ public abstract class BaseMenu {
     }
 
     protected static void setElementsMenu(JPanel panel, ArrayList<Object> elements) {
-        for (Object element : elements) {
-            panel.add((Component) element);
-        }
+        elements.forEach(element -> panel.add((Component) element));
     }
 }
