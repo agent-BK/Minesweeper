@@ -9,9 +9,10 @@ import static menu.LevelMenu.initLevelMenu;
 import static menu.ResizeFieldMenu.initSizeField;
 
 public class MainMenu {
-    public static void initMenu(InitGame obj) {
+
+    public static void initMenu(InitGame game) {
         JMenuBar menuBar = new JMenuBar();
-        obj.setJMenuBar(menuBar);
+        game.setJMenuBar(menuBar);
 
         JMenu gameMenu = new JMenu(SETTINGS.getText());
         JMenu helpMenu = new JMenu(HELP.getText());
@@ -34,11 +35,11 @@ public class MainMenu {
         helpMenu.addSeparator();
         helpMenu.add(aboutGame);
 
-        setExitGame(exitGame, obj);
-        setNewGame(newGame, obj);
+        setExitGame(exitGame, game);
+        setNewGame(newGame, game);
 
-        sizeField.addActionListener(arg0 -> initSizeField(obj, FIELD_SIZE.getText(), FIELD_SIZE.getText()));
-        levelGame.addActionListener(arg0 -> initLevelMenu(obj, LEVEL.getText(), LEVEL.getText()));
+        sizeField.addActionListener(arg0 -> initSizeField(game, FIELD_SIZE.getText(), FIELD_SIZE.getText()));
+        levelGame.addActionListener(arg0 -> initLevelMenu(game, LEVEL.getText(), LEVEL.getText()));
     }
 
     private static void setExitGame(JMenuItem menuItem, InitGame game) {

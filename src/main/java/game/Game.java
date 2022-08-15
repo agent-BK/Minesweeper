@@ -32,67 +32,6 @@ public class Game {
     }
 
     /**
-     * образование поля
-     **/
-    private void initField() {
-        countMine = 0;
-        boolean mine_status;
-        for (int x = 0; x < rows; x++) {
-            for (int y = 0; y < cols; y++) {
-                mine_status = getRandomNumber(level) == 1;
-                gamePanel[x][y] = new GameObject(x, y, mine_status);
-                if (mine_status) {
-                    countMine++;
-                }
-            }
-        }
-        countFlag = countMine;
-        initCountMine();
-    }
-
-    /**
-     * подсчет количества мин соседей
-     **/
-    private void initCountMine() {
-        for (int x = 0; x < rows; x++) {
-            for (int y = 0; y < cols; y++) {
-                GameObject gameObject = gamePanel[x][y];
-                if (!gameObject.isMine()) {
-                    List<GameObject> lists = getNeighbors(gameObject);
-                    for (GameObject list : lists) {
-                        if (list.isMine()) {
-                            gameObject.incCountMineNeighbors();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * список соседних ячеек
-     **/
-    private List<GameObject> getNeighbors(GameObject gameObject) {
-        List<GameObject> result = new ArrayList<>();
-        for (int x = gameObject.getX() - 1; x <= gameObject.getX() + 1; x++) {
-            for (int y = gameObject.getY() - 1; y <= gameObject.getY() + 1; y++) {
-                if (x < 0 || x >= rows || y < 0 || y >= cols || gamePanel[x][y] == gameObject) {
-                    continue;
-                }
-                result.add(gamePanel[x][y]);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * случайное число для расположения мин
-     **/
-    private int getRandomNumber(int num) {
-        return new Random().nextInt(num);
-    }
-
-    /**
      * Открываем все мины
      **/
     public void visibleAllMine() {
@@ -161,5 +100,66 @@ public class Game {
 
     public GameObject getCell(int x, int y) {
         return gamePanel[x][y];
+    }
+
+    /**
+     * образование поля
+     **/
+    private void initField() {
+        countMine = 0;
+        boolean mine_status;
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                mine_status = getRandomNumber(level) == 1;
+                gamePanel[x][y] = new GameObject(x, y, mine_status);
+                if (mine_status) {
+                    countMine++;
+                }
+            }
+        }
+        countFlag = countMine;
+        initCountMine();
+    }
+
+    /**
+     * подсчет количества мин соседей
+     **/
+    private void initCountMine() {
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                GameObject gameObject = gamePanel[x][y];
+                if (!gameObject.isMine()) {
+                    List<GameObject> lists = getNeighbors(gameObject);
+                    for (GameObject list : lists) {
+                        if (list.isMine()) {
+                            gameObject.incCountMineNeighbors();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * список соседних ячеек
+     **/
+    private List<GameObject> getNeighbors(GameObject gameObject) {
+        List<GameObject> result = new ArrayList<>();
+        for (int x = gameObject.getX() - 1; x <= gameObject.getX() + 1; x++) {
+            for (int y = gameObject.getY() - 1; y <= gameObject.getY() + 1; y++) {
+                if (x < 0 || x >= rows || y < 0 || y >= cols || gamePanel[x][y] == gameObject) {
+                    continue;
+                }
+                result.add(gamePanel[x][y]);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * случайное число для расположения мин
+     **/
+    private int getRandomNumber(int num) {
+        return new Random().nextInt(num);
     }
 }

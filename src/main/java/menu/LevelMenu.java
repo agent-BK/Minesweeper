@@ -40,14 +40,14 @@ public class LevelMenu extends BaseMenu {
         return btnGroup;
     }
 
-    private static JButton getBtnApply(JDialog dialog, InitGame obj, ButtonGroup btnGroup) {
+    private static JButton getBtnApply(JDialog dialog, InitGame game, ButtonGroup btnGroup) {
         JButton btn = new JButton(SET_LEVEL.getText());
         btn.addActionListener(e -> {
             dialog.dispose();
-            obj.setLevel(Integer.parseInt(btnGroup.getSelection().getActionCommand()));
-            obj.initPanel();
-            obj.initFrame();
-            obj.panelRepaint();
+            game.setLevel(Integer.parseInt(btnGroup.getSelection().getActionCommand()));
+            game.initPanel();
+            game.initFrame();
+            game.panelRepaint();
         });
         return btn;
     }
