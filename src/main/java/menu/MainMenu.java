@@ -9,7 +9,6 @@ import static menu.LevelMenu.initLevelMenu;
 import static menu.ResizeFieldMenu.initSizeField;
 
 public class MainMenu {
-
     public static void initMenu(InitGame game) {
         JMenuBar menuBar = new JMenuBar();
         game.setJMenuBar(menuBar);

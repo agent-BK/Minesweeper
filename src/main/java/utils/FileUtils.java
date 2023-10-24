@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.Objects;
 
 public class FileUtils {
-
     public static Image getImage(String filename) {
         return getImageIcon(filename).getImage();
     }

@@ -15,7 +15,6 @@ import static enums.Separator.SYMBOL_X;
 import static enums.Size.*;
 
 public class ResizeFieldMenu extends BaseMenu {
-
     public static void initSizeField(InitGame game, String title, String text) {
         ArrayList<Object> elements = new ArrayList<>();
         JDialog dialog = new JDialog(game, title, true);

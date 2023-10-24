@@ -7,7 +7,6 @@ import static enums.Label.*;
 import static enums.Size.*;
 
 public class SplashScreen extends JWindow {
-
     private static final int TIME = 5000;
     private final int WIDTH = SIZE_480.getSize();
     private final int HEIGHT = SIZE_320.getSize();

@@ -9,12 +9,10 @@ import java.util.List;
 
 @Data
 public class Game {
-
     private int cols;
     private int rows;
     private int countCell;
     private int level;
-
     private int countMine = 0;
     private int countFlag = 0;
     private boolean stopGame = false;
@@ -37,12 +35,7 @@ public class Game {
     public void visibleAllMine() {
         for (int x = 0; x < rows; x++) {
             for (int y = 0; y < cols; y++) {
-                GameObject gameObject = gamePanel[x][y];
-                if (gameObject.isFlag()) {
-                    gameObject.setIconAndOpen(gameObject.isMine() ? Icons.BOMB : Icons.NOBOMB, true);
-                } else if (gameObject.isMine() && !gameObject.isOpen()) {
-                    gameObject.setIconAndOpen(Icons.BOMBED, true);
-                }
+                visibleMine(x, y);
             }
         }
     }
@@ -52,22 +45,14 @@ public class Game {
      **/
     public void openTileWithLeftClick(int x, int y) {
         GameObject gameObject = gamePanel[x][y];
-        if (!gameObject.isOpen() && !gameObject.isFlag() && !stopGame) {
-            gameObject.setOpen(true);
-            if (gameObject.isMine()) {
-                gameObject.setIcon(Icons.BOMBED);
-                stopGame = true;
-            } else {
-                countCell--;
-                if (gameObject.getCountMineNeighbors() > 0) {
-                    gameObject.setIcon(Icons.values()[gameObject.getCountMineNeighbors()]);
-                } else {
-                    gameObject.setIcon(Icons.ZERO);
-                    getNeighbors(gameObject).stream()
-                            .filter(cell -> !cell.isOpen())
-                            .forEach(cell -> openTileWithLeftClick(cell.getX(), cell.getY()));
-                }
-            }
+        if (isTileUnopenable(gameObject)) {
+            return;
+        }
+        gameObject.setOpen(true);
+        if (gameObject.isMine()) {
+            handleMineTile(gameObject);
+        } else {
+            handleNonMineTile(gameObject);
         }
     }
 
@@ -75,17 +60,18 @@ public class Game {
      * правое нажатие мышки
      **/
     public void openTileWithRightClick(int x, int y) {
+        if (stopGame) {
+            return;
+        }
         GameObject gameObject = gamePanel[x][y];
-        if (!stopGame) {
-            if (!gameObject.isOpen() && !gameObject.isFlag() && countFlag > 0) {
-                gameObject.setFlag(true);
-                gameObject.setIcon(Icons.FLAGED);
-                countFlag--;
-            } else if (!gameObject.isOpen() && gameObject.isFlag()) {
-                gameObject.setFlag(false);
-                gameObject.setIcon(Icons.CLOSED);
-                countFlag++;
-            }
+        if (!gameObject.isOpen() && !gameObject.isFlag() && countFlag > 0) {
+            gameObject.setFlag(true);
+            gameObject.setIcon(Icons.FLAGED);
+            countFlag--;
+        } else if (!gameObject.isOpen() && gameObject.isFlag()) {
+            gameObject.setFlag(false);
+            gameObject.setIcon(Icons.CLOSED);
+            countFlag++;
         }
     }
 
@@ -103,9 +89,7 @@ public class Game {
             for (int y = 0; y < cols; y++) {
                 mine_status = RandomUtils.getRandomNumber(level) == 1;
                 gamePanel[x][y] = new GameObject(x, y, mine_status);
-                if (mine_status) {
-                    countMine++;
-                }
+                if (mine_status) countMine++;
             }
         }
         countFlag = countMine;
@@ -134,12 +118,44 @@ public class Game {
         List<GameObject> result = new ArrayList<>();
         for (int x = gameObject.getX() - 1; x <= gameObject.getX() + 1; x++) {
             for (int y = gameObject.getY() - 1; y <= gameObject.getY() + 1; y++) {
-                if (x < 0 || x >= rows || y < 0 || y >= cols || gamePanel[x][y] == gameObject) {
-                    continue;
-                }
+                if (x < 0 || x >= rows || y < 0 || y >= cols || gamePanel[x][y] == gameObject) continue;
                 result.add(gamePanel[x][y]);
             }
         }
         return result;
+    }
+
+    private boolean isTileUnopenable(GameObject gameObject) {
+        return gameObject.isOpen() || gameObject.isFlag() || stopGame;
+    }
+
+    private void handleMineTile(GameObject gameObject) {
+        gameObject.setIcon(Icons.BOMBED);
+        stopGame = true;
+    }
+
+    private void handleNonMineTile(GameObject gameObject) {
+        countCell--;
+        if (gameObject.getCountMineNeighbors() > 0) {
+            gameObject.setIcon(Icons.values()[gameObject.getCountMineNeighbors()]);
+        } else {
+            gameObject.setIcon(Icons.ZERO);
+            openNeighbors(gameObject);
+        }
+    }
+
+    private void openNeighbors(GameObject gameObject) {
+        getNeighbors(gameObject).stream()
+                .filter(cell -> !cell.isOpen())
+                .forEach(cell -> openTileWithLeftClick(cell.getX(), cell.getY()));
+    }
+
+    private void visibleMine(int x, int y) {
+        GameObject gameObject = gamePanel[x][y];
+        if (gameObject.isFlag()) {
+            gameObject.setIconAndOpen(gameObject.isMine() ? Icons.BOMB : Icons.NOBOMB, true);
+        } else if (gameObject.isMine() && !gameObject.isOpen()) {
+            gameObject.setIconAndOpen(Icons.BOMBED, true);
+        }
     }
 }

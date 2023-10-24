@@ -9,7 +9,6 @@ import static enums.Label.REPLAY_GAME;
 import static enums.Size.SIZE_180;
 
 public class MessageMenu extends BaseMenu {
-
     public static void showMessage(InitGame game, String text) {
         ArrayList<Object> elements = new ArrayList<>();
         JDialog dialog = new JDialog(game);

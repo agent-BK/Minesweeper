@@ -12,7 +12,6 @@ import static enums.Label.SET_LEVEL;
 import static enums.Size.*;
 
 public class LevelMenu extends BaseMenu {
-
     public static void initLevelMenu(InitGame game, String title, String text) {
         ArrayList<Object> elements = new ArrayList<>();
         JDialog dialog = new JDialog(game, title, true);

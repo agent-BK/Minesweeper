@@ -7,7 +7,6 @@ import java.awt.*;
 
 @Data
 public class GameObject {
-
     private int x;
     private int y;
     private boolean isMine;

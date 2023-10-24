@@ -17,12 +17,11 @@ import static menu.MessageMenu.showMessage;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class InitGame extends JFrame {
-
-    private JPanel panel;
-    private Game game;
     private int cols = 10;
     private int rows = 10;
     private int level = 10;
+    private JPanel panel;
+    private Game game;
 
     public InitGame() {
         initMenu(this);
@@ -45,50 +44,9 @@ public class InitGame extends JFrame {
 
     public void initPanel() {
         gameStart();
-        panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                for (int x = 0; x < rows; x++) {
-                    for (int y = 0; y < cols; y++) {
-                        g.drawImage(
-                                game.getCell(x, y).getIcon(),
-                                y * SIZE_30.getSize(),
-                                x * SIZE_30.getSize(),
-                                this);
-                    }
-                }
-            }
-        };
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (game.isGameStatus()) {
-                    int y = e.getX() / SIZE_30.getSize();
-                    int x = e.getY() / SIZE_30.getSize();
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-                        game.openTileWithLeftClick(x, y);
-                    } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        game.openTileWithRightClick(x, y);
-                    }
-                    if ((game.getCountCell() == game.getCountMine() && game.getCountFlag() == 0) || game.isStopGame()) {
-                        game.visibleAllMine();
-                        game.setGameStatus(false);
-                    }
-                    panel.repaint();
-                    if (!game.isGameStatus()) {
-                        if (game.isStopGame()) {
-                            showMessage(InitGame.this, LOSE.getText());
-                        } else {
-                            showMessage(InitGame.this, WIN.getText());
-                        }
-                    }
-                }
-            }
-        });
-        panel.setPreferredSize(
-                new Dimension(cols * SIZE_30.getSize(), rows * SIZE_30.getSize())
-        );
+        createPanel();
+        addMouseListenerToPanel();
+        setPanelPreferredSize();
         add(panel);
     }
 
@@ -100,5 +58,61 @@ public class InitGame extends JFrame {
         setResizable(false);
         setVisible(true);
         setIconImage(ICON_LOGO.getIcon());
+    }
+
+    private void createPanel() {
+        panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                paintGameCells(g);
+            }
+        };
+    }
+
+    private void addMouseListenerToPanel() {
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (!game.isGameStatus()) {
+                    return;
+                }
+                int y = e.getX() / SIZE_30.getSize();
+                int x = e.getY() / SIZE_30.getSize();
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    game.openTileWithLeftClick(x, y);
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    game.openTileWithRightClick(x, y);
+                }
+                handleGameCompletion();
+                panel.repaint();
+                if (game.isGameStatus()) {
+                    return;
+                }
+                String message = game.isStopGame() ? LOSE.getText() : WIN.getText();
+                showMessage(InitGame.this, message);
+            }
+        });
+    }
+
+    private void setPanelPreferredSize() {
+        Dimension dimension = new Dimension(cols * SIZE_30.getSize(), rows * SIZE_30.getSize());
+        panel.setPreferredSize(dimension);
+    }
+
+    private void paintGameCells(Graphics g) {
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                Image icon = game.getCell(x, y).getIcon();
+                g.drawImage(icon, y * SIZE_30.getSize(), x * SIZE_30.getSize(), this);
+            }
+        }
+    }
+
+    private void handleGameCompletion() {
+        if (game.getCountCell() == game.getCountMine() && game.getCountFlag() == 0 || game.isStopGame()) {
+            game.visibleAllMine();
+            game.setGameStatus(false);
+        }
     }
 }

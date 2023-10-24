@@ -10,7 +10,6 @@ import static enums.FontSize.FONT_20;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public abstract class BaseMenu {
-
     protected static JLabel getLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font(Font.SERIF, Font.BOLD, FONT_20.getSize()));
